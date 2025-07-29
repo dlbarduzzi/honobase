@@ -2,16 +2,19 @@
   "name": "honobase",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch src/serve.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/serve.js",
+    "lint": "eslint"
   },
   "dependencies": {
     "@hono/node-server": "^1.17.1",
     "hono": "^4.8.9"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^5.0.0",
     "@types/node": "^20.11.17",
+    "eslint-plugin-format": "^1.0.1",
     "tsx": "^4.7.1",
     "typescript": "^5.8.3"
   }

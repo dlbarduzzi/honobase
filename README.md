@@ -1,8 +1,5 @@
-```
-npm install
-npm run dev
-```
+# HonoBase
 
-```
-open http://localhost:3000
-```
+## License
+
+[MIT](./LICENSE)
