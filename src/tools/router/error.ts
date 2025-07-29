@@ -35,4 +35,11 @@ function newNotFoundError(message: string, rawError: unknown): ApiError {
   return newApiError(http.StatusNotFound, message, rawError)
 }
 
-export { newNotFoundError }
+function newInternalServerError(message: string, rawError: unknown): ApiError {
+  if (message === "") {
+    message = "Something went wrong while processing your request."
+  }
+  return newApiError(http.StatusInternalServerError, message, rawError)
+}
+
+export { newInternalServerError, newNotFoundError }
