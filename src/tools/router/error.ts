@@ -42,4 +42,4 @@ function newInternalServerError(message: string, rawError: unknown): ApiError {
   return newApiError(http.StatusInternalServerError, message, rawError)
 }
 
-export { newInternalServerError, newNotFoundError }
+export { newApiError, newInternalServerError, newNotFoundError }

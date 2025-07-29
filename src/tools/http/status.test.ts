@@ -1,7 +1,7 @@
 import { http } from "./status"
 import { describe, expect, it } from "vitest"
 
-describe("status codes", () => {
+describe("http status", () => {
   it("should match status code and text", () => {
     expect(http.StatusText(http.StatusOk))
       .toBe("Ok")

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { strings, lowercase, uppercase, capitalize } from "./index"
 
-describe("string", () => {
+describe("strings", () => {
   it("should lowercase string", () => {
     expect(lowercase("hello, world!")).toBe("hello, world!")
     expect(lowercase("Hello, world!")).toBe("hello, world!")
