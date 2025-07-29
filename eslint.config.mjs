@@ -33,8 +33,8 @@ export default antfu({
     "style/quotes": "error",
     "ts/no-unused-vars": ["error", {
       args: "all",
-      argsIgnorePattern: "^_$",
-      varsIgnorePattern: "^_$",
+      argsIgnorePattern: "^_",
+      varsIgnorePattern: "^_",
     }],
     "ts/no-explicit-any": "error",
     "ts/no-unused-expressions": "off",
