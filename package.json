@@ -5,7 +5,10 @@
     "dev": "tsx watch src/serve.ts",
     "build": "tsc",
     "start": "node dist/serve.js",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage.enabled=true",
+    "test:coverage:html": "vitest run --coverage"
   },
   "dependencies": {
     "@hono/node-server": "^1.17.1",
@@ -18,8 +21,10 @@
   "devDependencies": {
     "@antfu/eslint-config": "^5.0.0",
     "@types/node": "^20.11.17",
+    "@vitest/coverage-istanbul": "^3.2.4",
     "eslint-plugin-format": "^1.0.1",
     "tsx": "^4.7.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   }
 }
