@@ -6,6 +6,7 @@ import { requestId } from "hono/request-id"
 import { db } from "@/db/connect"
 import { logger } from "@/tools/logger"
 
+import { env } from "./data"
 import { loggerMiddleware } from "./logger"
 import { internalServerError, notFoundError } from "./error"
 
@@ -31,7 +32,16 @@ function bootstrap(app: App) {
   })
 
   app.onError((err, ctx) => {
-    return internalServerError(ctx, err)
+    if (env.NODE_ENV === "development") {
+      console.error(err)
+    }
+
+    ctx.var.logger.error(err.name, {
+      scope: "global",
+      status: "server_error",
+    })
+
+    return internalServerError()
   })
 }
 

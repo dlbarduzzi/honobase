@@ -1,40 +1,59 @@
-import type { AppContext } from "./types"
 import type { StatusCode } from "@/tools/http/status"
 
-import { env } from "./data"
 import { http } from "@/tools/http/status"
+import { toSentence } from "@/tools/inflector"
 
-function newApiError(status: StatusCode, message: string) {
+function newApiError(status: StatusCode, message: string, rawError?: unknown) {
   return Response.json({
     status,
     message,
+    details: rawError,
   }, {
     status,
     headers: { "Content-Type": "application/json" },
   })
 }
 
+function badRequestError(message: string) {
+  message = message.trim()
+
+  if (message === "") {
+    message = http.StatusText(http.StatusBadRequest)
+  }
+
+  return newApiError(http.StatusBadRequest, toSentence(message))
+}
+
 function notFoundError() {
   return newApiError(
     http.StatusNotFound,
-    "The requested resource was not found.",
+    toSentence("The requested resource was not found"),
   )
 }
 
-function internalServerError(ctx: AppContext, error: Error) {
-  if (env.NODE_ENV === "development") {
-    console.error(error)
-  }
-
-  ctx.var.logger.error(error.name, {
-    scope: "global",
-    status: "server_error",
-  })
-
+function internalServerError() {
   return newApiError(
     http.StatusInternalServerError,
-    "Something went wrong while processing your request.",
+    toSentence("Something went wrong while processing your request"),
   )
 }
 
-export { internalServerError, notFoundError }
+function invalidRequestError() {
+  return badRequestError("Invalid JSON request")
+}
+
+function invalidPayloadError<T>(error: T) {
+  return newApiError(
+    http.StatusBadRequest,
+    toSentence("Invalid JSON payload"),
+    error,
+  )
+}
+
+export {
+  badRequestError,
+  internalServerError,
+  invalidPayloadError,
+  invalidRequestError,
+  notFoundError,
+}
