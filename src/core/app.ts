@@ -11,6 +11,7 @@ import { loggerMiddleware } from "./logger"
 import { internalServerError, notFoundError } from "./error"
 
 import { AuthModel } from "./auth-model"
+import { UserModel } from "./user-model"
 
 function newApp() {
   return new Hono<AppEnv>({ strict: false })
@@ -21,7 +22,10 @@ function bootstrap(app: App) {
 
   app.use("*", async (ctx, next) => {
     ctx.set("logger", logger)
-    ctx.set("models", { auth: new AuthModel(db) })
+    ctx.set("models", {
+      auth: new AuthModel(db),
+      user: new UserModel(db),
+    })
     await next()
   })
 

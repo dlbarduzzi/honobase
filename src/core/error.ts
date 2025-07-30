@@ -31,6 +31,16 @@ function notFoundError() {
   )
 }
 
+function unprocessableEntityError(message: string) {
+  message = message.trim()
+
+  if (message === "") {
+    message = http.StatusText(http.StatusUnprocessableEntity)
+  }
+
+  return newApiError(http.StatusUnprocessableEntity, toSentence(message))
+}
+
 function internalServerError() {
   return newApiError(
     http.StatusInternalServerError,
@@ -56,4 +66,5 @@ export {
   invalidPayloadError,
   invalidRequestError,
   notFoundError,
+  unprocessableEntityError,
 }
