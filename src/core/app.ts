@@ -6,7 +6,7 @@ import { requestId } from "hono/request-id"
 import { logger } from "@/tools/logger"
 
 import { loggerMiddleware } from "./logger"
-import { internalServerError, notFoundError } from "./event"
+import { internalServerError, notFoundError } from "./error"
 
 function newApp() {
   return new Hono<AppEnv>({ strict: false })
@@ -22,8 +22,8 @@ function bootstrap(app: App) {
 
   app.use("*", loggerMiddleware)
 
-  app.notFound(ctx => {
-    return notFoundError(ctx)
+  app.notFound(() => {
+    return notFoundError()
   })
 
   app.onError((err, ctx) => {
