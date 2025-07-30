@@ -4,14 +4,6 @@ import type { StatusCode } from "@/tools/http/status"
 import { env } from "./data"
 import { http } from "@/tools/http/status"
 
-class ApiError extends Error {
-  public log: string
-  constructor(message: string, { log }: { log: string }) {
-    super(message)
-    this.log = log
-  }
-}
-
 function newApiError(status: StatusCode, message: string) {
   return Response.json({
     status,
@@ -34,9 +26,10 @@ function internalServerError(ctx: AppContext, error: Error) {
     console.error(error)
   }
 
-  if (error instanceof ApiError) {
-    ctx.var.logger.error(error.log)
-  }
+  ctx.var.logger.error(error.name, {
+    scope: "global",
+    status: "server_error",
+  })
 
   return newApiError(
     http.StatusInternalServerError,
@@ -44,4 +37,4 @@ function internalServerError(ctx: AppContext, error: Error) {
   )
 }
 
-export { ApiError, internalServerError, notFoundError }
+export { internalServerError, notFoundError }
