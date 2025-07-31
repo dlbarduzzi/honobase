@@ -4,11 +4,9 @@ import { Hono } from "hono"
 import { requestId } from "hono/request-id"
 
 import { db } from "@/db/connect"
-import { logger } from "@/tools/logger"
 
-import { env } from "./data"
-import { loggerMiddleware } from "./logger"
-import { internalServerError, notFoundError } from "./error"
+import { log, logRequest } from "./log"
+import { internalServerError, notFoundError, safeError } from "./error"
 
 import { AuthModel } from "./auth-model"
 import { UserModel } from "./user-model"
@@ -21,28 +19,28 @@ function bootstrap(app: App) {
   app.use("*", requestId())
 
   app.use("*", async (ctx, next) => {
-    ctx.set("logger", logger)
+    ctx.set("logger", log)
+
     ctx.set("models", {
       auth: new AuthModel(db),
       user: new UserModel(db),
     })
+
     await next()
   })
 
-  app.use("*", loggerMiddleware)
+  app.use("*", logRequest)
 
   app.notFound(() => {
     return notFoundError()
   })
 
   app.onError((err, ctx) => {
-    if (env.NODE_ENV === "development") {
-      console.error(err)
-    }
+    const { message, cause, stack } = safeError(err)
 
-    ctx.var.logger.error(err.name, {
-      scope: "global",
-      status: "server_error",
+    ctx.var.logger.error("GLOBAL_ERROR", message, {
+      cause,
+      stack,
     })
 
     return internalServerError()

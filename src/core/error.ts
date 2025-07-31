@@ -1,5 +1,7 @@
 import type { StatusCode } from "@/tools/http/status"
 
+import { env } from "./env"
+
 import { http } from "@/tools/http/status"
 import { toSentence } from "@/tools/inflector"
 
@@ -60,11 +62,50 @@ function invalidPayloadError<T>(error: T) {
   )
 }
 
+// safeError avoids Logging Full Stack Traces from Uncaught Errors.
+//
+// Logging full stack traces for uncaught errors can introduce security risks,
+// particularly if the error involves sensitive operations such as database
+// interactions. Unhandled exceptions may expose confidential information including
+// user data, credentials, tokens, or other internal system details.
+//
+// To mitigate this, use this helper check to control error visibility:
+// During development, enable stack traces to aid debugging.
+// In production, only enable stack traces temporarily and purposefully when
+// troubleshooting specific issues. Always disable them immediately after diagnosis
+// to prevent potential data leakage.
+function safeError(error: unknown, message?: string) {
+  message = message?.trim() ?? ""
+
+  if (message === "") {
+    message = "uncaught exception"
+  }
+
+  const err: { cause?: unknown, stack?: unknown, message: string } = {
+    cause: undefined,
+    stack: undefined,
+    message,
+  }
+
+  if (!(error instanceof Error)) {
+    return err
+  }
+
+  if (env.NODE_ENV === "development" || env.IS_LOG_STACK_ALLOWED) {
+    err.cause = error.cause
+    err.stack = error.stack
+    err.message = `${message} - ${error.message}`
+  }
+
+  return err
+}
+
 export {
   badRequestError,
   internalServerError,
   invalidPayloadError,
   invalidRequestError,
   notFoundError,
+  safeError,
   unprocessableEntityError,
 }

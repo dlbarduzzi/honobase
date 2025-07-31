@@ -1,4 +1,4 @@
-import { env } from "@/core/data"
+import { env } from "@/core/env"
 import { createLogger, format, transports } from "winston"
 
 const logger = createLogger({

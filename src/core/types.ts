@@ -1,12 +1,13 @@
-import type { Logger } from "winston"
 import type { Context, Hono } from "hono"
+
+import type { Log } from "./log"
 
 import type { AuthModel } from "./auth-model"
 import type { UserModel } from "./user-model"
 
 type AppEnv = {
   Variables: {
-    logger: Logger
+    logger: Log
     models: {
       auth: AuthModel
       user: UserModel

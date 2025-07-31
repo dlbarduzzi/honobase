@@ -1,4 +1,4 @@
-import { env } from "./data"
+import { env } from "./env"
 
 export function getIpAddress(req: Request | Headers): string | null {
   const testIP = "127.0.0.1"

@@ -3,7 +3,6 @@ import type { UserSchema } from "@/db/schemas"
 import z from "zod"
 
 import { newApp } from "./app"
-import { logSafeError } from "./logger"
 import { registerSchema } from "./auth-schema"
 
 import {
@@ -11,6 +10,7 @@ import {
   invalidRequestError,
   invalidPayloadError,
   unprocessableEntityError,
+  safeError,
 } from "./error"
 
 const app = newApp()
@@ -26,9 +26,15 @@ app.post("/register", async ctx => {
       return invalidRequestError()
     }
 
-    if (error instanceof Error) {
-      logSafeError(ctx, error, error.message)
-    }
+    const { message, cause, stack } = safeError(
+      error,
+      "json parse request body failed",
+    )
+
+    ctx.var.logger.error("AUTH_REGISTER_ERROR", message, {
+      cause,
+      stack,
+    })
 
     return internalServerError()
   }
@@ -45,7 +51,16 @@ app.post("/register", async ctx => {
     user = await ctx.var.models.user.findUserByEmail(parsed.data.email)
   }
   catch (error) {
-    logSafeError(ctx, error, "db query to find user by email failed")
+    const { message, cause, stack } = safeError(
+      error,
+      "db query to find user by email failed",
+    )
+
+    ctx.var.logger.error("AUTH_REGISTER_ERROR", message, {
+      cause,
+      stack,
+    })
+
     return internalServerError()
   }
 

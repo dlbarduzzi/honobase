@@ -3,4 +3,5 @@ process.env.LOG_LEVEL = "silent"
 process.env.APP_URL = "http://localhost:3000"
 process.env.APP_PORT = "3000"
 process.env.DATABASE_URL = "postgresql://test_user:test_pass@localhost:5432/test_db"
+process.env.IS_LOG_STACK_ALLOWED = "false"
 /* eslint-enable node/no-process-env */
