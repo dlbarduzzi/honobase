@@ -13,7 +13,8 @@ import {
   unprocessableEntityError,
 } from "./error"
 
-import { hashPassword } from "@/tools/crypto/password"
+import { http } from "@/tools/http/status"
+import { toSentence } from "@/tools/inflector"
 
 const app = newApp()
 
@@ -61,10 +62,30 @@ app.post("/register", async ctx => {
     return unprocessableEntityError("This email is already registered")
   }
 
-  const hash = await hashPassword(parsed.data.password)
-  console.warn({ hash })
+  const { email, password } = parsed.data
 
-  return ctx.json({ registered: true }, 201)
+  try {
+    user = await ctx.var.models.auth.createUser(email, password)
+  }
+  catch (error) {
+    logSafeError({
+      error,
+      status: "AUTH_REGISTER_ERROR",
+      message: "db query to create user failed",
+    })
+    return internalServerError()
+  }
+
+  const status = http.StatusCreated
+
+  return ctx.json(
+    {
+      user,
+      status,
+      message: toSentence("User created successfully."),
+    },
+    status,
+  )
 })
 
 export const authRoutes = app

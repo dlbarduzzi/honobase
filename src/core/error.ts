@@ -91,10 +91,16 @@ function safeError(error: unknown, message?: string) {
     return err
   }
 
+  let errorMessage = error.message.trim()
+
+  if (errorMessage !== "") {
+    errorMessage = ` - ${errorMessage}`
+  }
+
   if (env.NODE_ENV === "development" || env.IS_LOG_STACK_ALLOWED) {
     err.cause = error.cause
     err.stack = error.stack
-    err.message = `${message} - ${error.message}`
+    err.message = `${message}${errorMessage}`
   }
 
   return err
