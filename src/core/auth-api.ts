@@ -3,6 +3,7 @@ import type { UserSchema } from "@/db/schemas"
 import z from "zod"
 
 import { newApp } from "./app"
+import { logSafeError } from "./log"
 import { registerSchema } from "./auth-schema"
 
 import {
@@ -10,8 +11,9 @@ import {
   invalidRequestError,
   invalidPayloadError,
   unprocessableEntityError,
-  safeError,
 } from "./error"
+
+import { hashPassword } from "@/tools/crypto/password"
 
 const app = newApp()
 
@@ -26,14 +28,10 @@ app.post("/register", async ctx => {
       return invalidRequestError()
     }
 
-    const { message, cause, stack } = safeError(
+    logSafeError({
       error,
-      "json parse request body failed",
-    )
-
-    ctx.var.logger.error("AUTH_REGISTER_ERROR", message, {
-      cause,
-      stack,
+      status: "AUTH_REGISTER_ERROR",
+      message: "json parse request body failed",
     })
 
     return internalServerError()
@@ -51,22 +49,20 @@ app.post("/register", async ctx => {
     user = await ctx.var.models.user.findUserByEmail(parsed.data.email)
   }
   catch (error) {
-    const { message, cause, stack } = safeError(
+    logSafeError({
       error,
-      "db query to find user by email failed",
-    )
-
-    ctx.var.logger.error("AUTH_REGISTER_ERROR", message, {
-      cause,
-      stack,
+      status: "AUTH_REGISTER_ERROR",
+      message: "db query to find user by email failed",
     })
-
     return internalServerError()
   }
 
   if (user != null) {
     return unprocessableEntityError("This email is already registered")
   }
+
+  const hash = await hashPassword(parsed.data.password)
+  console.warn({ hash })
 
   return ctx.json({ registered: true }, 201)
 })

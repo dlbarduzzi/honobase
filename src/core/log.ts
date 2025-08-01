@@ -1,5 +1,6 @@
 import type { MiddlewareHandler } from "hono"
 
+import { safeError } from "./error"
 import { logger } from "@/tools/logger"
 
 type Status =
@@ -43,6 +44,15 @@ const logRequest: MiddlewareHandler = async (ctx, next) => {
   })
 }
 
+function logSafeError({ error, status, message }: {
+  error: unknown
+  status: StatusError
+  message: string
+}) {
+  const err = safeError(error, message)
+  log.error(status, err.message, { cause: err.cause, stack: err.stack })
+}
+
 type Log = typeof log
 
-export { log, type Log, logRequest }
+export { log, type Log, logRequest, logSafeError }
