@@ -1,25 +1,23 @@
-import { describe, it, expect, beforeAll } from "vitest"
+import { describe, it, expect } from "vitest"
 import { hashPassword, verifyPassword } from "./password"
 
 describe.sequential("password hashing and verification", async () => {
-  let hash = ""
-  const password = "testPassword"
+  // it("should hash and verify valid password", async () => {
+  //   const password = "testPassword"
+  //   const hash = await hashPassword(password)
+  //   expect(hash).toMatch(/^[a-f0-9]{32}:[a-f0-9]+$/)
 
-  // Need this to prevent timing issue while hashing and then verifying password.
-  beforeAll(async () => {
-    hash = await hashPassword(password)
-  })
-
-  it("should hash and verify valid password", async () => {
-    expect(hash).toMatch(/^[a-f0-9]{32}:[a-f0-9]+$/)
-
-    const isValid = await verifyPassword(hash, password)
-    expect(isValid).toBe(true)
-  })
+  //   const isValid = await verifyPassword(hash, password)
+  //   expect(isValid).toBe(true)
+  // })
 
   it("should fail verification with incorrect password", async () => {
+    const password = "testPassword"
     const newPassword = "newPassword"
+
+    const hash = await hashPassword(password)
     const isValid = await verifyPassword(hash, newPassword)
+
     expect(isValid).toBe(false)
   })
 

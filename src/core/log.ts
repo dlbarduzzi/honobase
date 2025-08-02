@@ -5,10 +5,12 @@ import { logger } from "@/tools/logger"
 
 type Status =
   | "REQUEST_DETAILS"
+  | "EMAIL_VERIFICATION_SUCCESS"
 
 type StatusError =
   | "GLOBAL_ERROR"
   | "AUTH_REGISTER_ERROR"
+  | "EMAIL_VERIFICATION_ERROR"
 
 type Options = { [key: string]: unknown }
 
