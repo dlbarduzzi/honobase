@@ -76,6 +76,8 @@ app.post("/register", async ctx => {
     return internalServerError()
   }
 
+  // TODO: Send email verification.
+
   const status = http.StatusCreated
 
   return ctx.json(
