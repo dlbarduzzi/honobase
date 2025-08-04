@@ -26,6 +26,16 @@ function badRequestError(message: string) {
   return newApiError(http.StatusBadRequest, toSentence(message))
 }
 
+function unauthorized(message: string) {
+  message = message.trim()
+
+  if (message === "") {
+    message = http.StatusText(http.StatusUnauthorized)
+  }
+
+  return newApiError(http.StatusUnauthorized, toSentence(message))
+}
+
 function notFoundError() {
   return newApiError(
     http.StatusNotFound,
@@ -113,5 +123,6 @@ export {
   invalidRequestError,
   notFoundError,
   safeError,
+  unauthorized,
   unprocessableEntityError,
 }

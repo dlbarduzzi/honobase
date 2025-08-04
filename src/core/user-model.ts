@@ -17,6 +17,13 @@ class UserModel {
       where: eq(users.email, lowercase(email)),
     })
   }
+
+  public async updateUserByEmail(email: string) {
+    return await this.db.update(users)
+      .set({ isEmailVerified: true })
+      .where(eq(users.email, email))
+      .returning()
+  }
 }
 
 export { UserModel }

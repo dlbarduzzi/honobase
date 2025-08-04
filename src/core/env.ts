@@ -13,6 +13,7 @@ const schema = z.object({
   IS_LOG_STACK_ALLOWED: z.enum(["true", "false"]).transform(value => value === "true"),
   RESEND_API_KEY: z.string().min(1),
   APP_EMAIL_ONBOARDING: z.email(),
+  JWT_AUTH_SECRET: z.string().min(12),
 })
 
 // eslint-disable-next-line node/no-process-env
